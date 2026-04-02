@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}Контакты - Образовательный портал{% endblock %}
+
+{% block content %}
+<h1 style="font-size: 38px; color: var(--text-primary); margin-bottom: 15px;">{{ contact_page.page_title|default:'Контакты' }}</h1>
+<p style="font-size: 18px; color: var(--text-secondary); margin-bottom: 40px;">{{ contact_page.page_subtitle|default:'Свяжитесь с нами удобным для вас способом' }}</p>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px;">
+    <!-- Contact Info -->
+    <div>
+        <div style="background: var(--bg-white); padding: 35px; border-radius: 12px; box-shadow: 0 3px 12px rgba(0,0,0,0.08); margin-bottom: 25px;">
+            <h3 style="color: var(--primary-blue); font-size: 24px; margin-bottom: 25px;">📍 {{ contact_page.contact_card_title|default:'Наши контакты' }}</h3>
+            
+            <div style="margin-bottom: 20px;">
+                <div style="color: var(--text-light); font-size: 13px; margin-bottom: 5px;">Адрес</div>
+                <div style="color: var(--text-primary); font-size: 16px;">г. Бухара, ул. Академика Ибрагима Муминова, 28/2</div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="color: var(--text-light); font-size: 13px; margin-bottom: 5px;">Телефон</div>
+                <div style="color: var(--text-primary); font-size: 16px;">+998 97 736 20 11</div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="color: var(--text-light); font-size: 13px; margin-bottom: 5px;">Директор</div>
+                <div style="color: var(--text-primary); font-size: 16px;">Ахроров Хуршид Хамидович</div>
+                <div style="color: var(--text-secondary); font-size: 14px; margin-top: 3px;">Директор издательства "BUKHARA HAMD PRINT"</div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="color: var(--text-light); font-size: 13px; margin-bottom: 5px;">Режим работы</div>
+                <div style="color: var(--text-primary); font-size: 16px;">Ежедневно: 9:00 - 18:00</div>
+            </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%); padding: 35px; border-radius: 12px; color: white; box-shadow: 0 3px 12px rgba(0,0,0,0.08);">
+            <h3 style="font-size: 22px; margin-bottom: 15px;">💬 Горячая линия</h3>
+            <p style="margin-bottom: 20px; opacity: 0.95; line-height: 1.7;">Если у вас есть вопросы или вам нужна помощь, звоните нам в рабочее время</p>
+            <div style="font-size: 32px; font-weight: bold;">+998 97 736 20 11</div>
+            <div style="font-size: 14px; opacity: 0.9;">Ежедневно: 9:00 - 18:00</div>
+        </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div style="background: var(--bg-white); padding: 35px; border-radius: 12px; box-shadow: 0 3px 12px rgba(0,0,0,0.08);">
+        <h3 style="color: var(--primary-blue); font-size: 24px; margin-bottom: 25px;">✉️ {{ contact_page.form_title|default:'Отправьте нам сообщение' }}</h3>
+        
+        <div id="messageAlert" style="display: none; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 500;"></div>
+        
+        <form id="contactForm" method="post">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500;">Ваше имя</label>
+                <input type="text" name="name" id="name" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500;">Email</label>
+                <input type="email" name="email" id="email" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500;">Телефон</label>
+                <input type="tel" name="phone" id="phone" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500;">Тема</label>
+                <select name="subject" id="subject" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px;">
+                    <option value="">Выберите тему</option>
+                    {% for subject in contact_subjects %}
+                    <option>{{ subject.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500;">Сообщение</label>
+                <textarea name="message" id="message" rows="5" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px; resize: vertical;"></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn" style="width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s;">Отправить сообщение</button>
+        </form>
+    </div>
+</div>
+
+<!-- Map -->
+<div style="background: var(--bg-white); padding: 35px; border-radius: 12px; box-shadow: 0 3px 12px rgba(0,0,0,0.08);">
+    <h3 style="color: var(--primary-blue); font-size: 24px; margin-bottom: 20px; text-align: center;">🗺️ {{ contact_page.map_title|default:'Как нас найти' }}</h3>
+    <div style="width: 100%; height: 450px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <iframe 
+            src="{{ contact_page.map_embed_url|default:'https://maps.google.com/maps?q=39.766348,64.436239&hl=ru&z=16&output=embed' }}" 
+            width="100%" 
+            height="100%" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+    </div>
+</div>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submitBtn');
+    const messageAlert = document.getElementById('messageAlert');
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value
+    };
+    
+    // Disable button
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправка...';
+    
+    try {
+        const response = await fetch('/contact/submit/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        // Show message
+        messageAlert.style.display = 'block';
+        if (result.success) {
+            messageAlert.style.background = '#d4edda';
+            messageAlert.style.color = '#155724';
+            messageAlert.style.border = '1px solid #c3e6cb';
+            messageAlert.textContent = '✅ ' + result.message;
+            
+            // Reset form
+            document.getElementById('contactForm').reset();
+        } else {
+            messageAlert.style.background = '#f8d7da';
+            messageAlert.style.color = '#721c24';
+            messageAlert.style.border = '1px solid #f5c6cb';
+            messageAlert.textContent = '❌ ' + result.message;
+        }
+        
+        // Hide message after 5 seconds
+        setTimeout(() => {
+            messageAlert.style.display = 'none';
+        }, 5000);
+        
+    } catch (error) {
+        messageAlert.style.display = 'block';
+        messageAlert.style.background = '#f8d7da';
+        messageAlert.style.color = '#721c24';
+        messageAlert.style.border = '1px solid #f5c6cb';
+        messageAlert.textContent = '❌ Произошла ошибка. Пожалуйста, попробуйте снова.';
+    } finally {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Отправить сообщение';
+    }
+});
+</script>
+{% endblock %}

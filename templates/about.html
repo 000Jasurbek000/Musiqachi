@@ -1,0 +1,400 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}О нас - Образовательный портал{% endblock %}
+
+{% block content %}
+<style>
+    .about-hero {
+        background: linear-gradient(135deg, rgba(100, 181, 246, 0.1) 0%, rgba(77, 208, 225, 0.1) 100%);
+        padding: 60px 40px;
+        border-radius: 25px;
+        margin-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(100, 181, 246, 0.15) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+    
+    .about-hero h1 {
+        font-size: 42px;
+        color: var(--text-primary);
+        margin-bottom: 15px;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .about-hero p {
+        font-size: 20px;
+        color: var(--text-secondary);
+        position: relative;
+        z-index: 1;
+    }
+
+    .mission-card {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+        padding: 60px;
+        border-radius: 25px;
+        color: white;
+        margin-bottom: 50px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(100, 181, 246, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .mission-card::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        left: -100px;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+    
+    .mission-card h2 {
+        font-size: 36px;
+        margin-bottom: 25px;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .mission-card p {
+        font-size: 19px;
+        opacity: 0.95;
+        max-width: 950px;
+        margin: 0 auto;
+        line-height: 1.9;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+    }
+    
+    .stat-card {
+        background: var(--bg-white);
+        padding: 45px 35px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, var(--primary-blue), var(--secondary-cyan));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    }
+    
+    .stat-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .stat-number {
+        font-size: 54px;
+        font-weight: 800;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 17px;
+        font-weight: 500;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 35px;
+        margin-bottom: 60px;
+    }
+    
+    .info-card {
+        background: var(--bg-white);
+        padding: 45px;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .info-card h3 {
+        color: var(--primary-blue);
+        font-size: 26px;
+        margin-bottom: 25px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .info-card p {
+        color: var(--text-secondary);
+        line-height: 1.9;
+        margin-bottom: 18px;
+        font-size: 16px;
+    }
+    
+    .info-card ul {
+        color: var(--text-secondary);
+        line-height: 2.2;
+        list-style: none;
+        padding: 0;
+    }
+    
+    .info-card ul li {
+        padding-left: 30px;
+        position: relative;
+        font-size: 16px;
+    }
+    
+    .info-card ul li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--accent-green);
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .team-section {
+        background: var(--bg-white);
+        padding: 50px;
+        border-radius: 25px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .team-section h3 {
+        color: var(--primary-blue);
+        font-size: 32px;
+        margin-bottom: 45px;
+        text-align: center;
+        font-weight: 700;
+    }
+    
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 40px;
+    }
+    
+    .team-member {
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .team-member:hover {
+        transform: translateY(-8px);
+    }
+    
+    .member-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 56px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .team-member:hover .member-avatar {
+        transform: scale(1.1);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+    }
+    
+    .member-avatar.blue {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    }
+    
+    .member-avatar.green {
+        background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-green-dark) 100%);
+    }
+    
+    .member-avatar.cyan {
+        background: linear-gradient(135deg, var(--secondary-cyan) 0%, #26C6DA 100%);
+    }
+    
+    .member-name {
+        color: var(--text-primary);
+        font-size: 20px;
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+    
+    .member-role {
+        color: var(--text-light);
+        font-size: 15px;
+    }
+    
+    @media (max-width: 768px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .about-hero h1 {
+            font-size: 32px;
+        }
+        
+        .mission-card {
+            padding: 40px 30px;
+        }
+    }
+</style>
+
+<div class="about-hero">
+    <h1>О нашем образовательном центре</h1>
+    <p>Мы помогаем людям с ограниченными возможностями получить качественное образование</p>
+</div>
+
+<div class="mission-card">
+    <h2>🎯 Наша миссия</h2>
+    <p>Предоставить людям с ограниченными возможностями зрения и слуха доступ к качественному образованию, профессиональной подготовке и возможностям для самореализации. Мы верим, что каждый человек имеет право на развитие и профессиональный рост независимо от физических особенностей.</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">300+</div>
+        <div class="stat-label">Активных студентов</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">20+</div>
+        <div class="stat-label">Образовательных курсов</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Качественное обучение</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">2026</div>
+        <div class="stat-label">Год основания</div>
+    </div>
+</div>
+
+<div class="info-grid">
+    <div class="info-card">
+        <h3><span>🎓</span> Наши направления</h3>
+        <ul>
+            <li>IT и программирование</li>
+            <li>Языковые курсы</li>
+            <li>Профессиональная реабилитация</li>
+            <li>Творческие специальности</li>
+            <li>Бизнес и предпринимательство</li>
+        </ul>
+    </div>
+    
+    <div class="info-card">
+        <h3>
+            <span style="display: inline-flex; align-items: center;">
+                <svg width="32" height="32" viewBox="0 0 512 512" style="vertical-align: middle;">
+                    <defs>
+                        <linearGradient id="bulbGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#f7941d;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ed5a2e;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Light rays -->
+                    <line x1="200" y1="40" x2="180" y2="10" stroke="url(#bulbGradient)" stroke-width="20" stroke-linecap="round"/>
+                    <line x1="256" y1="20" x2="256" y2="0" stroke="url(#bulbGradient)" stroke-width="20" stroke-linecap="round"/>
+                    <line x1="312" y1="40" x2="332" y2="10" stroke="url(#bulbGradient)" stroke-width="20" stroke-linecap="round"/>
+                    <line x1="150" y1="80" x2="120" y2="60" stroke="url(#bulbGradient)" stroke-width="20" stroke-linecap="round"/>
+                    <line x1="362" y1="80" x2="392" y2="60" stroke="url(#bulbGradient)" stroke-width="20" stroke-linecap="round"/>
+                    
+                    <!-- Bulb -->
+                    <circle cx="256" cy="120" r="60" fill="none" stroke="url(#bulbGradient)" stroke-width="18"/>
+                    <rect x="236" y="175" width="40" height="15" rx="3" fill="url(#bulbGradient)"/>
+                    <rect x="233" y="190" width="46" height="20" rx="5" fill="url(#bulbGradient)"/>
+                    
+                    <!-- Key inside bulb -->
+                    <circle cx="280" cy="120" r="12" fill="none" stroke="url(#bulbGradient)" stroke-width="6"/>
+                    <line x1="280" y1="120" x2="320" y2="120" stroke="url(#bulbGradient)" stroke-width="6"/>
+                    <line x1="305" y1="110" x2="305" y2="120" stroke="url(#bulbGradient)" stroke-width="6"/>
+                    <line x1="315" y1="110" x2="315" y2="120" stroke="url(#bulbGradient)" stroke-width="6"/>
+                    <circle cx="328" cy="120" r="5" fill="url(#bulbGradient)"/>
+                    
+                    <!-- Hand -->
+                    <path d="M80 280 L80 320 Q80 340 100 340 L320 340 Q350 340 370 320 L400 290 Q420 270 400 250 Q380 230 360 250 L340 270 L340 220 Q340 200 320 200 Q300 200 300 220 L300 200 Q300 180 280 180 Q260 180 260 200 L260 180 Q260 160 240 160 Q220 160 220 180 L220 240 L180 240 Q140 240 140 280 L140 300 L80 300 Z" 
+                          fill="none" stroke="url(#bulbGradient)" stroke-width="18" stroke-linejoin="round" stroke-linecap="round"/>
+                    
+                    <!-- Platform on hand -->
+                    <path d="M180 250 L340 250 Q360 250 370 265 L385 280" 
+                          fill="none" stroke="url(#bulbGradient)" stroke-width="16" stroke-linecap="round"/>
+                </svg>
+            </span> 
+            Наши возможности
+        </h3>
+        <ul>
+            <li>Адаптированные учебные материалы</li>
+            <li>Аудиокниги и озвученные лекции</li>
+            <li>Сурдоперевод на занятиях</li>
+            <li>Индивидуальный подход</li>
+            <li>Современное оборудование</li>
+        </ul>
+    </div>
+    
+    <div class="info-card">
+        <h3><span>🌟</span> Наши ценности</h3>
+        <p>Мы создаём инклюзивную образовательную среду, где каждый студент может раскрыть свой потенциал. Наша команда состоит из опытных педагогов и специалистов по реабилитации, которые используют современные методики обучения.</p>
+    </div>
+    
+    <div class="info-card">
+        <h3><span>🤝</span> Партнёры и достижения</h3>
+        <p>Мы сотрудничаем с ведущими образовательными учреждениями и работодателями. Наши выпускники успешно работают в IT-компаниях, государственных организациях и открывают собственный бизнес.</p>
+    </div>
+</div>
+
+<!-- Founder Section -->
+<div style="background: var(--bg-white); padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); text-align: center; max-width: 600px; margin: 0 auto;">
+    <h3 style="color: var(--primary-blue); font-size: 24px; margin-bottom: 25px; font-weight: 700;">Основатель</h3>
+    
+    <div style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 20px; background: white; border: 3px solid #333; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);">
+        <img src="{% static 'image/author.png' %}" alt="Founder" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    
+    <div style="color: var(--text-primary); font-size: 20px; margin-bottom: 8px; font-weight: 700;">Ахроров Хуршид Хамидович</div>
+    <div style="color: var(--text-secondary); font-size: 15px;">Директор издательства "BUKHARA HAMD PRINT"</div>
+</div>
+
+{% endblock %}

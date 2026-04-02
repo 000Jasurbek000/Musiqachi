@@ -1,0 +1,611 @@
+{% extends 'base.html' %}
+
+{% block title %}Курсы - Образовательный портал{% endblock %}
+
+{% block content %}
+<style>
+    .courses-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    
+    .courses-header h1 {
+        font-size: 42px;
+        color: var(--text-primary);
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .courses-header p {
+        font-size: 18px;
+        color: var(--text-secondary);
+    }
+    
+    .courses-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+    
+    .course-card {
+        background: var(--bg-white);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+    }
+    .course-card:focus-visible {
+        outline: 3px solid rgba(66, 165, 245, 0.45);
+        outline-offset: 4px;
+    }
+    
+    .course-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(100, 181, 246, 0.3);
+    }
+    
+    .course-image {
+        width: 100%;
+        height: 240px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .course-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%);
+        transition: opacity 0.3s;
+    }
+    
+    .course-card:hover .course-image::before {
+        opacity: 0.5;
+    }
+    
+    .course-duration {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(100, 181, 246, 0.95);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .course-level {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(76, 175, 80, 0.95);
+        color: white;
+        padding: 6px 14px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+    }
+    
+    .course-content {
+        padding: 25px;
+    }
+    
+    .course-category {
+        color: var(--secondary-cyan);
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+    }
+    
+    .course-title {
+        font-size: 22px;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+        font-weight: 700;
+        line-height: 1.3;
+        min-height: 58px;
+    }
+    
+    .course-description {
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        height: 66px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+    
+    .course-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-light);
+    }
+    
+    .course-stats {
+        display: flex;
+        gap: 15px;
+        font-size: 13px;
+        color: var(--text-light);
+    }
+    
+    .course-stats span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 50px;
+    }
+    
+    .pagination-btn {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .pagination-btn:hover:not(:disabled) {
+        background: linear-gradient(135deg, var(--primary-blue-dark), var(--primary-blue));
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(100, 181, 246, 0.4);
+    }
+    
+    .pagination-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .pagination-info {
+        font-size: 16px;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+    
+    .enroll-btn {
+        position: absolute;
+        bottom: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 12px 30px;
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-cyan));
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        opacity: 0;
+        white-space: nowrap;
+    }
+    
+    .course-card:hover .enroll-btn {
+        bottom: 25px;
+        opacity: 1;
+    }
+    
+    .enroll-btn:hover {
+        transform: translateX(-50%) scale(1.05);
+        box-shadow: 0 5px 20px rgba(100, 181, 246, 0.5);
+    }
+    
+    .filters-section {
+        background: var(--bg-white);
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 40px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .filters-title {
+        color: var(--primary-blue);
+        font-size: 22px;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+    
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    
+    .filter-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-size: 14px;
+    }
+    
+    .filter-group input[type="text"] {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        font-size: 15px;
+        color: var(--text-primary);
+        background: var(--bg-white);
+        transition: all 0.3s;
+    }
+    
+    .filter-group input[type="text"]:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.1);
+    }
+    
+    .filter-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        font-size: 15px;
+        color: var(--text-primary);
+        background: var(--bg-white);
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .filter-group select:hover {
+        border-color: var(--primary-blue);
+    }
+    
+    .filter-group select:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.1);
+    }
+
+    .custom-select {
+        position: relative;
+    }
+
+    .custom-select-trigger {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        background: var(--bg-white);
+        color: var(--text-primary);
+        font-size: 15px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.3s;
+    }
+
+    .custom-select-trigger:hover,
+    .custom-select-trigger:focus-visible {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.1);
+        outline: none;
+    }
+
+    .custom-options {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: calc(100% + 6px);
+        background: var(--bg-white);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+        max-height: 260px;
+        overflow-y: auto;
+        display: none;
+        z-index: 10;
+    }
+
+    .custom-select.open .custom-options {
+        display: block;
+    }
+
+    .custom-option {
+        padding: 10px 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .custom-option:hover,
+    .custom-option:focus-visible {
+        background: #ebf4ff;
+        color: #2b6cb0;
+        outline: none;
+    }
+
+    .custom-option.active {
+        background: #2b6cb0;
+        color: white;
+    }
+</style>
+
+<div class="courses-header">
+    <h1>Наши курсы</h1>
+    <p>Выберите подходящее направление обучения и начните развиваться уже сегодня</p>
+</div>
+
+<div class="filters-section">
+    <h3 class="filters-title">🔍 Фильтры</h3>
+    <div class="filters-grid">
+        <div class="filter-group">
+            <label for="searchInput">Поиск</label>
+            <input type="text" id="searchInput" placeholder="🔍 Поиск по названию..." oninput="filterCourses()" aria-label="Поиск курсов" data-speak="Поиск курсов по названию">
+        </div>
+        <div class="filter-group">
+            <label for="categoryFilter">Категория</label>
+            <div class="custom-select" data-select="categoryFilter" data-speak="Фильтр категории. Выберите значение">
+                <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false" data-speak="Фильтр категории: Все категории">
+                    <span>Все категории</span>
+                    <span>▾</span>
+                </button>
+                <div class="custom-options" role="listbox">
+                    <div class="custom-option active" role="option" tabindex="0" data-value="all" data-speak="Все категории">Все категории</div>
+                    {% for category_value, category_label in categories %}
+                    <div class="custom-option" role="option" tabindex="0" data-value="{{ category_value }}" data-speak="{{ category_label }}">{{ category_label }}</div>
+                    {% endfor %}
+                </div>
+                <select id="categoryFilter" aria-label="Фильтр по категории" hidden>
+                    <option value="all" selected>Все категории</option>
+                    {% for category_value, category_label in categories %}
+                    <option value="{{ category_value }}">{{ category_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="filter-group">
+            <label for="levelFilter">Уровень</label>
+            <div class="custom-select" data-select="levelFilter" data-speak="Фильтр уровня. Выберите значение">
+                <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false" data-speak="Фильтр уровня: Все уровни">
+                    <span>Все уровни</span>
+                    <span>▾</span>
+                </button>
+                <div class="custom-options" role="listbox">
+                    <div class="custom-option active" role="option" tabindex="0" data-value="all" data-speak="Все уровни">Все уровни</div>
+                    {% for level_value, level_label in levels %}
+                    <div class="custom-option" role="option" tabindex="0" data-value="{{ level_value }}" data-speak="{{ level_label }}">{{ level_label }}</div>
+                    {% endfor %}
+                </div>
+                <select id="levelFilter" aria-label="Фильтр по уровню" hidden>
+                    <option value="all" selected>Все уровни</option>
+                    {% for level_value, level_label in levels %}
+                    <option value="{{ level_value }}">{{ level_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="filter-group">
+            <label for="durationFilter">Длительность</label>
+            <div class="custom-select" data-select="durationFilter" data-speak="Фильтр длительности. Выберите значение">
+                <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false" data-speak="Фильтр длительности: Любая">
+                    <span>Любая</span>
+                    <span>▾</span>
+                </button>
+                <div class="custom-options" role="listbox">
+                    <div class="custom-option active" role="option" tabindex="0" data-value="all" data-speak="Любая">Любая</div>
+                    {% for duration_value, duration_label in durations %}
+                    <div class="custom-option" role="option" tabindex="0" data-value="{{ duration_value }}" data-speak="{{ duration_label }}">{{ duration_label }}</div>
+                    {% endfor %}
+                </div>
+                <select id="durationFilter" aria-label="Фильтр по длительности" hidden>
+                    <option value="all" selected>Любая</option>
+                    {% for duration_value, duration_label in durations %}
+                    <option value="{{ duration_value }}">{{ duration_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="courses-grid" id="coursesGrid"></div>
+
+<div class="pagination">
+    <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
+        <span>←</span>
+        <span>Предыдущая</span>
+    </button>
+    <span class="pagination-info" id="pageInfo"></span>
+    <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+        <span>Следующая</span>
+        <span>→</span>
+    </button>
+</div>
+
+{{ courses_data|json_script:"courses-data" }}
+
+<script>
+const coursesData = JSON.parse(document.getElementById('courses-data').textContent);
+
+let currentPage = 1;
+const coursesPerPage = 8;
+let filteredCourses = [...coursesData];
+let totalPages = Math.max(1, Math.ceil(filteredCourses.length / coursesPerPage));
+
+function filterCourses() {
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    const category = document.getElementById('categoryFilter').value;
+    const level = document.getElementById('levelFilter').value;
+    const duration = document.getElementById('durationFilter').value;
+    
+    filteredCourses = coursesData.filter(course => {
+        let matchSearch = course.title.toLowerCase().includes(searchQuery) || 
+                         course.description.toLowerCase().includes(searchQuery);
+        let matchCategory = category === 'all' || course.category === category;
+        let matchLevel = level === 'all' || course.level === level;
+        let matchDuration = duration === 'all' || course.duration === duration;
+        
+        return matchSearch && matchCategory && matchLevel && matchDuration;
+    });
+    
+    currentPage = 1;
+    totalPages = Math.max(1, Math.ceil(filteredCourses.length / coursesPerPage));
+    renderCourses();
+}
+
+function renderCourses() {
+    const startIndex = (currentPage - 1) * coursesPerPage;
+    const endIndex = startIndex + coursesPerPage;
+    const currentCourses = filteredCourses.slice(startIndex, endIndex);
+    
+    const coursesGrid = document.getElementById('coursesGrid');
+    if (!currentCourses.length) {
+        coursesGrid.innerHTML = '<div class="pagination-info">Курсы пока не добавлены.</div>';
+        updatePagination();
+        return;
+    }
+
+    coursesGrid.innerHTML = currentCourses.map(course => `
+        <div class="course-card" role="link" tabindex="0" data-href="/courses/${course.id}/" data-speak="${course.title}. Категория ${course.category}. Уровень ${course.level}. Длительность ${course.duration}. ${course.description}">
+            <div class="course-image" style="background-image: url('${course.image}')">
+                <div class="course-level">${course.level}</div>
+                <div class="course-duration">
+                    <span>⏱</span>
+                    <span>${course.duration}</span>
+                </div>
+            </div>
+            <div class="course-content">
+                <div class="course-category">${course.category}</div>
+                <h3 class="course-title">${course.title}</h3>
+                <p class="course-description">${course.description}</p>
+                <div class="course-footer">
+                    <div class="course-stats">
+                        <span>👥 ${course.students}</span>
+                        <span>📚 ${course.lessons} уроков</span>
+                    </div>
+                </div>
+            </div>
+            <button class="enroll-btn" onclick="window.location.href='/courses/${course.id}/'">Записаться на курс</button>
+        </div>
+    `).join('');
+
+    if (typeof attachSpeechHandlers === 'function') {
+        attachSpeechHandlers(coursesGrid);
+    }
+
+    if (typeof attachDataHrefHandlers === 'function') {
+        attachDataHrefHandlers(coursesGrid);
+    }
+    
+    updatePagination();
+}
+
+function setupCustomSelects() {
+    document.querySelectorAll('.custom-select').forEach((selectWrapper) => {
+        const trigger = selectWrapper.querySelector('.custom-select-trigger');
+        const options = selectWrapper.querySelectorAll('.custom-option');
+        const hiddenSelect = selectWrapper.querySelector('select');
+
+        const closeAll = () => {
+            document.querySelectorAll('.custom-select.open').forEach((openSelect) => {
+                if (openSelect !== selectWrapper) {
+                    openSelect.classList.remove('open');
+                    const openTrigger = openSelect.querySelector('.custom-select-trigger');
+                    if (openTrigger) {
+                        openTrigger.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+        };
+
+        trigger.addEventListener('click', () => {
+            const isOpen = selectWrapper.classList.contains('open');
+            closeAll();
+            selectWrapper.classList.toggle('open', !isOpen);
+            trigger.setAttribute('aria-expanded', String(!isOpen));
+        });
+
+        options.forEach((option) => {
+            option.addEventListener('click', () => {
+                options.forEach((item) => item.classList.remove('active'));
+                option.classList.add('active');
+
+                const value = option.dataset.value;
+                const text = option.textContent.trim();
+                if (hiddenSelect) {
+                    hiddenSelect.value = value;
+                }
+
+                trigger.querySelector('span').textContent = text;
+                trigger.setAttribute('data-speak', `${trigger.closest('.custom-select').previousElementSibling.textContent.trim()}: ${text}`);
+                selectWrapper.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
+
+                filterCourses();
+            });
+
+            option.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    option.click();
+                }
+            });
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!selectWrapper.contains(event.target)) {
+                selectWrapper.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
+            }
+        });
+    });
+}
+
+function updatePagination() {
+    document.getElementById('pageInfo').textContent = `Страница ${currentPage} из ${totalPages}`;
+    document.getElementById('prevBtn').disabled = currentPage === 1 || !filteredCourses.length;
+    document.getElementById('nextBtn').disabled = currentPage === totalPages || !filteredCourses.length;
+}
+
+function changePage(direction) {
+    const newPage = currentPage + direction;
+    if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        renderCourses();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+// Initial render
+renderCourses();
+setupCustomSelects();
+</script>
+{% endblock %}

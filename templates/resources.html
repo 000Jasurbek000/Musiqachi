@@ -1,0 +1,683 @@
+{% extends 'base.html' %}
+{% block title %}Учебные материалы — Образовательный портал{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== PAGE HERO ===== */
+    .page-hero {
+        background: linear-gradient(135deg, rgba(43, 108, 176, 0.92) 0%, rgba(26, 54, 93, 0.95) 100%),
+                    url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1920&h=500&fit=crop') center/cover no-repeat;
+        background-attachment: fixed;
+        padding: 80px 0 60px;
+        color: #fff;
+        text-align: center;
+    }
+    .page-hero h1 {
+        font-size: 2.4rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        letter-spacing: -0.5px;
+    }
+    .page-hero p {
+        font-size: 1.1rem;
+        opacity: 0.88;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* ===== CONTAINER ===== */
+    .resources-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 50px 20px 80px;
+    }
+
+    /* ===== FILTER BAR ===== */
+    .filter-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+        padding: 20px 28px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .filter-label {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 0.95rem;
+        margin-right: 4px;
+    }
+    .filter-btn {
+        padding: 8px 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 30px;
+        background: #f7fafc;
+        color: #4a5568;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .filter-btn:hover {
+        border-color: #2b6cb0;
+        color: #2b6cb0;
+        background: #ebf4ff;
+    }
+    .filter-btn.active {
+        background: #2b6cb0;
+        border-color: #2b6cb0;
+        color: #fff;
+    }
+    .filter-search {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .filter-search input {
+        padding: 8px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 30px;
+        font-size: 0.9rem;
+        color: #2d3748;
+        outline: none;
+        transition: border-color 0.2s;
+        width: 220px;
+    }
+    .filter-search input:focus {
+        border-color: #2b6cb0;
+    }
+
+    /* ===== SECTION TITLES ===== */
+    .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        margin-top: 50px;
+    }
+    .section-heading:first-of-type { margin-top: 0; }
+    .section-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+    .section-icon.pdf   { background: #fff5f5; }
+    .section-icon.audio { background: #f0fff4; }
+    .section-icon.video { background: #ebf4ff; }
+    .section-heading h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a365d;
+    }
+    .section-count {
+        margin-left: auto;
+        font-size: 0.9rem;
+        color: #718096;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 4px 14px;
+    }
+
+    /* ===== RESOURCE GRID ===== */
+    .resource-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+        margin-bottom: 16px;
+    }
+
+    /* ===== RESOURCE CARD ===== */
+    .resource-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: box-shadow 0.25s ease, transform 0.25s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    .resource-card:focus-visible {
+        outline: 3px solid rgba(43, 108, 176, 0.4);
+        outline-offset: 4px;
+    }
+    .resource-card:hover {
+        box-shadow: 0 8px 30px rgba(43, 108, 176, 0.12);
+        transform: translateY(-3px);
+    }
+    .card-thumb {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        display: block;
+        background: #f7fafc;
+    }
+    .card-thumb-placeholder {
+        width: 100%;
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+    }
+    .thumb-pdf   { background: linear-gradient(135deg, #fff5f5, #fed7d7); }
+    .thumb-audio { background: linear-gradient(135deg, #f0fff4, #c6f6d5); }
+    .thumb-video { background: linear-gradient(135deg, #ebf4ff, #bee3f8); }
+
+    .card-body {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .card-type-badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+    }
+    .badge-pdf   { background: #fff5f5; color: #c53030; }
+    .badge-audio { background: #f0fff4; color: #276749; }
+    .badge-video { background: #ebf4ff; color: #2b6cb0; }
+
+    .card-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1a365d;
+        margin-bottom: 8px;
+        line-height: 1.4;
+    }
+    .card-desc {
+        font-size: 0.88rem;
+        color: #718096;
+        line-height: 1.55;
+        flex: 1;
+        margin-bottom: 16px;
+    }
+    .card-meta {
+        font-size: 0.8rem;
+        color: #a0aec0;
+        display: flex;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+    .card-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .btn-view {
+        flex: 1;
+        padding: 9px 14px;
+        background: #2b6cb0;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    .btn-view:hover { background: #2c5282; }
+    .btn-download {
+        padding: 9px 14px;
+        background: #f7fafc;
+        color: #2b6cb0;
+        border: 2px solid #bee3f8;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .btn-download:hover { background: #ebf4ff; border-color: #2b6cb0; }
+
+    /* ===== AUDIO PLAYER (inline preview) ===== */
+    .audio-player-inline {
+        width: 100%;
+        margin-bottom: 14px;
+        accent-color: #2b6cb0;
+    }
+
+    /* ===== VIDEO PLAYER (iframe/embed) ===== */
+    .video-preview {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border: none;
+        display: block;
+        background: #000;
+    }
+
+    /* ===== DIVIDER ===== */
+    .section-divider {
+        border: none;
+        border-top: 2px solid #e2e8f0;
+        margin: 50px 0 0;
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-section {
+        text-align: center;
+        padding: 40px;
+        background: #f7fafc;
+        border: 1px dashed #e2e8f0;
+        border-radius: 10px;
+        color: #a0aec0;
+        font-size: 0.95rem;
+    }
+
+    /* ===== MODAL OVERLAY ===== */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.72);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+        background: #fff;
+        border-radius: 14px;
+        width: 90%;
+        max-width: 800px;
+        max-height: 90vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 24px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .modal-header h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1a365d;
+    }
+    .modal-close {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: none;
+        background: #f7fafc;
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4a5568;
+        transition: background 0.2s;
+    }
+    .modal-close:hover { background: #e2e8f0; }
+    .modal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 24px;
+    }
+    .pdf-viewer-frame {
+        width: 100%;
+        height: 500px;
+        border: none;
+        border-radius: 8px;
+        background: #525659;
+    }
+    .audio-player-modal {
+        width: 100%;
+        margin: 20px 0;
+        accent-color: #2b6cb0;
+    }
+    .video-player-modal {
+        width: 100%;
+        border-radius: 8px;
+        margin: 10px 0;
+    }
+
+    /* ===== HIDDEN FILTER ===== */
+    .resource-section { transition: opacity 0.25s; }
+    .resource-section.hidden { display: none; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .page-hero h1 { font-size: 1.7rem; }
+        .resource-grid { grid-template-columns: 1fr; }
+        .filter-bar { padding: 16px; }
+        .filter-search { margin-left: 0; width: 100%; }
+        .filter-search input { width: 100%; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <h1>📚 Учебные материалы</h1>
+    <p>Коллекция материалов по лингвистике: книги, аудиолекции и видеоуроки для углублённого изучения языка</p>
+</section>
+
+<div class="resources-container">
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <span class="filter-label">Фильтр:</span>
+        <button class="filter-btn active" onclick="filterResources('all', this)" data-speak="Фильтр: все материалы">🗂️ Все материалы</button>
+        <button class="filter-btn" onclick="filterResources('pdf', this)" data-speak="Фильтр: PDF книги">📄 PDF книги</button>
+        <button class="filter-btn" onclick="filterResources('audio', this)" data-speak="Фильтр: аудио">🎧 Аудио</button>
+        <button class="filter-btn" onclick="filterResources('video', this)" data-speak="Фильтр: видео">🎬 Видео</button>
+        <div class="filter-search">
+            <input type="text" id="searchInput" placeholder="🔍 Поиск по названию..." oninput="searchResources(this.value)" aria-label="Поиск по названию" data-speak="Поиск по названию">
+        </div>
+    </div>
+
+    <!-- ===== PDF SECTION ===== -->
+    <div class="resource-section" id="section-pdf">
+        <div class="section-heading">
+            <div class="section-icon pdf">📄</div>
+            <h2>PDF документы и книги</h2>
+            <span class="section-count">{{ pdf_resources|length }} материалов</span>
+        </div>
+
+        <div class="resource-grid">
+            {% for resource in pdf_resources %}
+            <div class="resource-card" role="link" tabindex="0" data-type="pdf" data-title="{{ resource.title }}"
+                  data-href="#" data-action="pdf"
+                  data-speak="PDF. {{ resource.title }}. {{ resource.description }}. Год {{ resource.year }}. {{ resource.pages_count }} страниц. {{ resource.file_size }}.">
+                <img class="card-thumb" src="{{ resource.thumbnail_url }}" alt="{{ resource.title }}">
+                <div class="card-body">
+                    <span class="card-type-badge badge-pdf">PDF</span>
+                    <div class="card-title">{{ resource.title }}</div>
+                    <div class="card-desc">{{ resource.description }}</div>
+                    <div class="card-meta">
+                        <span>📅 {{ resource.year }}</span>
+                        <span>📖 {{ resource.pages_count }} стр.</span>
+                        <span>📦 {{ resource.file_size }}</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-view" onclick="openPdfModal('{{ resource.title|escapejs }}', '{{ resource.file_url|escapejs }}'); return false;">👁️ Просмотр</a>
+                        <a href="{{ resource.file_url }}" download class="btn-download">⬇️ Скачать</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-section">Материалы PDF пока не добавлены.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===== AUDIO SECTION ===== -->
+    <div class="resource-section" id="section-audio">
+        <div class="section-heading">
+            <div class="section-icon audio">🎧</div>
+            <h2>Аудиолекции и записи</h2>
+            <span class="section-count">{{ audio_resources|length }} материалов</span>
+        </div>
+
+        <div class="resource-grid">
+            {% for resource in audio_resources %}
+            <div class="resource-card" role="link" tabindex="0" data-type="audio" data-title="{{ resource.title }}"
+                  data-href="#" data-action="audio"
+                  data-speak="Аудио. {{ resource.title }}. {{ resource.description }}. {{ resource.duration_text }}. {{ resource.file_size }}.">
+                <img class="card-thumb" src="{{ resource.thumbnail_url }}" alt="{{ resource.title }}">
+                <div class="card-body">
+                    <span class="card-type-badge badge-audio">АУДИО</span>
+                    <div class="card-title">{{ resource.title }}</div>
+                    <div class="card-desc">{{ resource.description }}</div>
+                    <div class="card-meta">
+                        <span>⏱️ {{ resource.duration_text }}</span>
+                        <span>📦 {{ resource.file_size }}</span>
+                    </div>
+                    <audio class="audio-player-inline" controls preload="none">
+                        <source src="{{ resource.file_url }}" type="audio/mpeg">
+                        Ваш браузер не поддерживает воспроизведение аудио.
+                    </audio>
+                    <div class="card-actions">
+                        <a href="{{ resource.file_url }}" download class="btn-download" style="flex:1; justify-content:center;">⬇️ Скачать аудио</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-section">Аудиоматериалы пока не добавлены.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===== VIDEO SECTION ===== -->
+    <div class="resource-section" id="section-video">
+        <div class="section-heading">
+            <div class="section-icon video">🎬</div>
+            <h2>Видеоуроки и лекции</h2>
+            <span class="section-count">{{ video_resources|length }} материалов</span>
+        </div>
+
+        <div class="resource-grid">
+            {% for resource in video_resources %}
+            <div class="resource-card" role="link" tabindex="0" data-type="video" data-title="{{ resource.title }}"
+                  data-href="#" data-action="video"
+                  data-speak="Видео. {{ resource.title }}. {{ resource.description }}. {{ resource.duration_text }}.">
+                 <img class="card-thumb"
+                     src="{{ resource.thumbnail_url }}"
+                     alt="{{ resource.title }}"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="card-thumb-placeholder thumb-video" style="display:none;">🎬</div>
+                <div class="card-body">
+                    <span class="card-type-badge badge-video">ВИДЕО</span>
+                    <div class="card-title">{{ resource.title }}</div>
+                    <div class="card-desc">{{ resource.description }}</div>
+                    <div class="card-meta">
+                        <span>⏱️ {{ resource.duration_text }}</span>
+                        <span>📺 {{ resource.quality_text }}</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-view" onclick="openVideoModal('{{ resource.title|escapejs }}', '{{ resource.embed_url|escapejs }}'); return false;">▶️ Смотреть</a>
+                        <a href="{{ resource.external_url }}" target="_blank" class="btn-download">🔗 Видео</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-section">Видеоматериалы пока не добавлены.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<!-- ===== PDF MODAL ===== -->
+<div class="modal-overlay" id="pdfModal" onclick="closeModal('pdfModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 id="pdfModalTitle">Просмотр PDF</h3>
+            <button class="modal-close" onclick="closeModal('pdfModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <iframe id="pdfFrame" class="pdf-viewer-frame" src=""></iframe>
+            <div style="text-align:center; margin-top:14px;">
+                <a id="pdfDownloadBtn" href="#" download class="btn-download" style="display:inline-flex; padding: 10px 28px; font-size:0.95rem;">⬇️ Скачать PDF</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== VIDEO MODAL ===== -->
+<div class="modal-overlay" id="videoModal" onclick="closeModal('videoModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 id="videoModalTitle">Просмотр видео</h3>
+            <button class="modal-close" onclick="closeModal('videoModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <iframe id="videoFrame"
+                    class="video-player-modal"
+                    style="width:100%; height:420px; border:none; border-radius:8px;"
+                    src=""
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ===== FILTER =====
+function filterResources(type, btn) {
+    // Update buttons
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const sections = document.querySelectorAll('.resource-section');
+    sections.forEach(sec => {
+        if (type === 'all') {
+            sec.classList.remove('hidden');
+        } else {
+            sec.classList.toggle('hidden', sec.id !== 'section-' + type);
+        }
+    });
+}
+
+// ===== SEARCH =====
+function searchResources(query) {
+    const q = query.toLowerCase().trim();
+    document.querySelectorAll('.resource-card').forEach(card => {
+        const title = card.getAttribute('data-title').toLowerCase();
+        const desc  = card.querySelector('.card-desc').textContent.toLowerCase();
+        card.style.display = (!q || title.includes(q) || desc.includes(q)) ? '' : 'none';
+    });
+}
+
+function handleResourceCardAction(card) {
+    const action = card.dataset.action;
+    if (action === 'pdf') {
+        const title = card.querySelector('.card-title')?.textContent?.trim();
+        const viewBtn = card.querySelector('.btn-view');
+        if (viewBtn) {
+            viewBtn.click();
+        } else if (title) {
+            openPdfModal(title, '');
+        }
+        return;
+    }
+
+    if (action === 'video') {
+        const viewBtn = card.querySelector('.btn-view');
+        if (viewBtn) {
+            viewBtn.click();
+        }
+        return;
+    }
+
+    if (action === 'audio') {
+        const audio = card.querySelector('audio');
+        if (audio) {
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+    }
+}
+
+function bindResourceCards() {
+    document.querySelectorAll('.resource-card[data-action]').forEach((card) => {
+        if (card.dataset.bound === 'true') {
+            return;
+        }
+        card.dataset.bound = 'true';
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('a, button, input, textarea, audio')) {
+                return;
+            }
+            handleResourceCardAction(card);
+        });
+        card.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                handleResourceCardAction(card);
+            }
+        });
+    });
+
+    if (typeof attachSpeechHandlers === 'function') {
+        attachSpeechHandlers();
+    }
+}
+
+// ===== PDF MODAL =====
+function openPdfModal(title, url) {
+    document.getElementById('pdfModalTitle').textContent = title;
+    document.getElementById('pdfFrame').src = url;
+    document.getElementById('pdfDownloadBtn').href = url;
+    document.getElementById('pdfModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+// ===== VIDEO MODAL =====
+function openVideoModal(title, embedUrl) {
+    document.getElementById('videoModalTitle').textContent = title;
+    document.getElementById('videoFrame').src = embedUrl;
+    document.getElementById('videoModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+// ===== CLOSE MODAL =====
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    // Stop media
+    if (id === 'pdfModal') document.getElementById('pdfFrame').src = '';
+    if (id === 'videoModal') document.getElementById('videoFrame').src = '';
+}
+
+// Keyboard ESC close
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal('pdfModal');
+        closeModal('videoModal');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    bindResourceCards();
+});
+</script>
+{% endblock %}

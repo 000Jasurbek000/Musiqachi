@@ -1,0 +1,624 @@
+{% extends 'base.html' %}
+
+{% block title %}Курс - Образовательный портал{% endblock %}
+
+{% block content %}
+<style>
+    .book-detail {
+        background: #f8f9fa;
+        min-height: 100vh;
+        padding: 40px 0;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        background: white;
+        color: var(--primary-blue);
+        text-decoration: none;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+    }
+
+    .back-button:hover {
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .content-layout {
+        display: grid;
+        grid-template-columns: 400px 1fr;
+        gap: 30px;
+        align-items: start;
+    }
+
+    .left-sidebar {
+        position: sticky;
+        top: 100px;
+    }
+
+    .book-header {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .book-title {
+        font-size: 1.8rem;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .book-description {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #555;
+        margin-bottom: 12px;
+        font-size: 0.9rem;
+    }
+
+    .meta-item i {
+        color: var(--primary-blue);
+        font-size: 1rem;
+        width: 20px;
+    }
+
+    .meta-label {
+        font-weight: 600;
+        color: #333;
+        min-width: 80px;
+    }
+
+    .statistics {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .stat-title {
+        font-size: 1.2rem;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .stat-row:last-child {
+        border-bottom: none;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+    }
+
+    .right-content {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .reader-title {
+        font-size: 1.8rem;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .flipbook-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        padding: 20px;
+    }
+
+    .flipbook-wrapper {
+        position: relative;
+        background: linear-gradient(to bottom, #e0e0e0 0%, #a0a0a0 100%);
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        min-width: 600px;
+        width: fit-content;
+    }
+
+    #flipbook {
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .page {
+        background: white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .page canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .flipbook-controls {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        padding: 20px 40px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .flipbook-controls button {
+        padding: 12px 30px;
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .flipbook-controls button:hover:not(:disabled) {
+        background: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .flipbook-controls button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .flipbook-controls span {
+        font-size: 1.1rem;
+        color: #2c3e50;
+        font-weight: 600;
+        padding: 12px 24px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        min-width: 120px;
+        text-align: center;
+    }
+
+    .audio-container {
+        display: none;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .audio-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .audio-hint {
+        font-size: 0.95rem;
+        color: #666;
+        margin-bottom: 16px;
+    }
+
+    .audio-player {
+        width: 100%;
+        margin: 10px 0 20px;
+        accent-color: var(--primary-blue);
+    }
+
+    .audio-container.clickable-audio {
+        cursor: pointer;
+    }
+
+    .audio-container.clickable-audio:hover {
+        box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+        transform: translateY(-2px);
+    }
+
+    .loading-indicator {
+        text-align: center;
+        padding: 100px 20px;
+        color: #666;
+        font-size: 1.2rem;
+    }
+
+    .loading-indicator i {
+        font-size: 3rem;
+        color: var(--primary-blue);
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    @media (max-width: 1200px) {
+        .content-layout {
+            grid-template-columns: 1fr;
+        }
+        
+        .left-sidebar {
+            position: relative;
+            top: 0;
+        }
+    }
+</style>
+
+<section class="book-detail">
+    <div class="container">
+        <a href="{% url 'courses' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i> Назад к курсам
+        </a>
+
+        <div class="content-layout">
+            <!-- Left Sidebar -->
+            <div class="left-sidebar">
+                <div class="book-header">
+                    <h1 class="book-title" id="courseTitle">{{ course.title }}</h1>
+                    <p class="book-description" id="courseDesc">{{ course.full_description }}</p>
+                    
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span class="meta-label">Автор:</span>
+                        <span id="courseAuthor">{{ course.author }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span class="meta-label">Год:</span>
+                        <span id="courseYear">{{ course.publication_year }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="meta-label">Продолжительность:</span>
+                        <span id="courseDuration">{{ course.duration_text }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-signal"></i>
+                        <span class="meta-label">Уровень:</span>
+                        <span id="courseLevel">{{ course.level }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-link"></i>
+                        <span class="meta-label">Источник:</span>
+                        <span id="courseSource">{{ course.source_name }}</span>
+                    </div>
+                </div>
+
+                <div class="statistics">
+                    <h3 class="stat-title">Статистика</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">Студенты</span>
+                        <span class="stat-value" id="courseStudents">{{ course.students_count }}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Уроки</span>
+                        <span class="stat-value" id="courseLessons">{{ course.lessons_count }}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Страницы</span>
+                        <span class="stat-value" id="totalPagesSidebar">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Цена</span>
+                        <span class="stat-value">{{ course.price_text }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Content - PDF Viewer -->
+            <div class="right-content">
+                <h2 class="reader-title">Чтение курса</h2>
+                
+                <div class="flipbook-container">
+                    <div class="audio-container clickable-audio" id="audioContainer" data-speak="Для воспроизведения нажмите на поле. Аудиоматериал готов.">
+                        <div class="audio-title">Аудиоматериал курса</div>
+                        <div class="audio-hint" id="audioHint">Для воспроизведения нажмите на поле.</div>
+                        <audio id="courseAudio" class="audio-player" controls preload="none">
+                            <source id="courseAudioSource" src="{{ course.audio_url }}" type="audio/mpeg">
+                            Ваш браузер не поддерживает аудио.
+                        </audio>
+                    </div>
+
+                    <div id="loading-indicator" class="loading-indicator">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Загрузка материалов...</p>
+                    </div>
+                    
+                    <div class="flipbook-wrapper" id="flipbookWrapper" style="display: none;">
+                        <div id="flipbook"></div>
+                    </div>
+                    
+                    <!-- Boshqaruv tugmalari -->
+                    <div class="flipbook-controls" id="flipbookControls" style="display: none;">
+                        <button id="prevBtn">
+                            <i class="fas fa-chevron-left"></i> Предыдущая
+                        </button>
+                        <span><span id="currentPage">1</span> / <span id="totalPages">--</span></span>
+                        <button id="nextBtn">
+                            Следующая <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    
+                    <p style="text-align: center; color: #666; margin-top: 10px; font-size: 0.9rem; display: none;" id="helpText">
+                        <i class="fas fa-info-circle"></i> Используйте стрелки клавиатуры для перелистывания
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PDF.js - PDF faylni o'qish uchun -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<!-- StPageFlip - sahifalarni aylantirish uchun -->
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+
+<script>
+const course = {
+    pdfUrl: '{{ course.pdf_url|escapejs }}',
+    audioUrl: '{{ course.audio_url|escapejs }}'
+};
+
+const audioContainer = document.getElementById('audioContainer');
+const courseAudio = document.getElementById('courseAudio');
+const courseAudioSource = document.getElementById('courseAudioSource');
+const audioHint = document.getElementById('audioHint');
+
+if (courseAudioSource) {
+    courseAudioSource.src = course.audioUrl || '';
+    courseAudio.load();
+}
+
+// PDF.js worker sozlash
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let pdfDoc = null;
+let pageFlip = null;
+
+// PDF yuklash va flipbook yaratish
+async function initFlipbook() {
+    const pdfUrl = course.pdfUrl;
+    
+    try {
+        // PDF ni yuklash
+        const loadingTask = pdfjsLib.getDocument(pdfUrl);
+        pdfDoc = await loadingTask.promise;
+        
+        console.log('PDF loaded successfully!', pdfDoc.numPages, 'pages');
+        
+        // UI ni darhol ko'rsatish
+        document.getElementById('loading-indicator').style.display = 'none';
+        document.getElementById('flipbookWrapper').style.display = 'block';
+        document.getElementById('flipbookControls').style.display = 'flex';
+        document.getElementById('helpText').style.display = 'block';
+        
+        // Sahifalar sonini yangilash
+        const totalPagesElement = document.getElementById('totalPages');
+        const totalPagesSidebarElement = document.getElementById('totalPagesSidebar');
+        
+        if (totalPagesElement) {
+            totalPagesElement.textContent = pdfDoc.numPages;
+        }
+        if (totalPagesSidebarElement) {
+            totalPagesSidebarElement.textContent = pdfDoc.numPages;
+        }
+        console.log('Total pages set to:', pdfDoc.numPages);
+        
+        // Har bir sahifa uchun HTML yaratish
+        const pages = [];
+        for (let i = 1; i <= pdfDoc.numPages; i++) {
+            const pageDiv = document.createElement('div');
+            pageDiv.className = 'page';
+            pageDiv.innerHTML = `<canvas id="page-${i}"></canvas>`;
+            pages.push(pageDiv);
+            document.getElementById('flipbook').appendChild(pageDiv);
+        }
+        
+        // PDF sahifalarini render qilish
+        console.log('Rendering pages...');
+        for (let i = 1; i <= pdfDoc.numPages; i++) {
+            await renderPage(i);
+        }
+        console.log('All pages rendered!');
+        
+        // DOM ga qo'shilganidan keyin PageFlip yaratish
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // PageFlip obyektini yaratish
+        const container = document.getElementById('flipbook');
+        pageFlip = new St.PageFlip(container, {
+            width: 600,      // Bitta sahifa kengligi
+            height: 800,     // Sahifa balandligi
+            size: 'fixed',   // Qattiq o'lcham
+            showCover: true, // Muqovani ko'rsatish (bitta sahifa)
+            flippingTime: 800, // Animatsiya tezligi
+            usePortrait: true,
+            startPage: 0,
+            drawShadow: true,
+            useMouseEvents: true,
+            minWidth: 315,
+            maxWidth: 800,
+            minHeight: 400,
+            maxHeight: 1200
+        });
+        
+        // Sahifalarni PageFlip ga yuklash
+        const pageElements = container.querySelectorAll('.page');
+        pageFlip.loadFromHTML(Array.from(pageElements));
+        
+        // Sahifa raqamini yangilash
+        document.getElementById('currentPage').textContent = '1';
+        
+        // Event listeners
+        pageFlip.on('flip', (e) => {
+            document.getElementById('currentPage').textContent = e.data + 1;
+            updateButtons();
+        });
+        
+        pageFlip.on('changeState', (e) => {
+            console.log('State changed:', e);
+        });
+        
+        updateButtons();
+        
+        console.log('Flipbook initialized successfully!');
+        
+        updateButtons();
+        
+    } catch (error) {
+        console.error('PDF Load Error:', error);
+        document.getElementById('loading-indicator').innerHTML = 
+            '<i class="fas fa-exclamation-triangle"></i><p style="color: red;">PDF yuklanmadi: ' + error.message + '</p>';
+    }
+}
+
+// Sahifa render qilish funksiyasi
+async function renderPage(pageNum) {
+    const page = await pdfDoc.getPage(pageNum);
+    const canvas = document.getElementById(`page-${pageNum}`);
+    const ctx = canvas.getContext('2d');
+    
+    const viewport = page.getViewport({ scale: 2.0 });
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    
+    await page.render({
+        canvasContext: ctx,
+        viewport: viewport
+    }).promise;
+}
+
+// Boshqaruv tugmalari
+document.getElementById('prevBtn').addEventListener('click', () => {
+    if (pageFlip) {
+        pageFlip.flipPrev();  // Oldingi sahifa
+    }
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+    if (pageFlip) {
+        pageFlip.flipNext();  // Keyingi sahifa
+    }
+});
+
+function updateButtons() {
+    if (!pageFlip) return;
+    const currentPage = pageFlip.getCurrentPageIndex();
+    document.getElementById('prevBtn').disabled = currentPage === 0;
+    document.getElementById('nextBtn').disabled = currentPage >= pdfDoc.numPages - 1;
+}
+
+// Klaviatura boshqaruvi
+document.addEventListener('keydown', (e) => {
+    if (!pageFlip) return;
+    if (e.key === 'ArrowLeft') {
+        pageFlip.flipPrev();
+    } else if (e.key === 'ArrowRight') {
+        pageFlip.flipNext();
+    }
+});
+
+// PDF ni yuklash
+function toggleReaderMode(isAccessible) {
+    const showAudio = Boolean(isAccessible);
+    const loading = document.getElementById('loading-indicator');
+    const flipbookWrapper = document.getElementById('flipbookWrapper');
+    const flipbookControls = document.getElementById('flipbookControls');
+    const helpText = document.getElementById('helpText');
+
+    if (showAudio) {
+        if (loading) loading.style.display = 'none';
+        if (flipbookWrapper) flipbookWrapper.style.display = 'none';
+        if (flipbookControls) flipbookControls.style.display = 'none';
+        if (helpText) helpText.style.display = 'none';
+        if (audioContainer) audioContainer.style.display = 'block';
+    } else {
+        if (audioContainer) audioContainer.style.display = 'none';
+        if (!pdfDoc) {
+            initFlipbook();
+        } else {
+            if (loading) loading.style.display = 'none';
+            if (flipbookWrapper) flipbookWrapper.style.display = 'block';
+            if (flipbookControls) flipbookControls.style.display = 'flex';
+            if (helpText) helpText.style.display = 'block';
+        }
+    }
+}
+
+if (audioContainer) {
+    audioContainer.addEventListener('mouseenter', () => {
+        if (typeof speakText === 'function') {
+            speakText('Для воспроизведения нажмите на поле.');
+        }
+    });
+
+    audioContainer.addEventListener('click', () => {
+        if (!courseAudio) {
+            return;
+        }
+        if (courseAudio.paused) {
+            courseAudio.play();
+            if (audioHint) {
+                audioHint.textContent = 'Идёт воспроизведение. Нажмите на поле для паузы.';
+            }
+        } else {
+            courseAudio.pause();
+            if (audioHint) {
+                audioHint.textContent = 'Пауза. Нажмите на поле для продолжения.';
+            }
+        }
+    });
+}
+
+document.addEventListener('accessibility-mode-changed', (event) => {
+    toggleReaderMode(event.detail?.enabled);
+});
+
+const initialAccessibilityMode = document.body.classList.contains('accessibility-mode');
+toggleReaderMode(initialAccessibilityMode);
+
+if (!initialAccessibilityMode) {
+    initFlipbook();
+}
+</script>
+{% endblock %}
