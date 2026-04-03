@@ -9,9 +9,172 @@
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
+    <!-- Preloader CSS -->
+    <style>
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        
+        #preloader::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(147, 197, 253, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(96, 165, 250, 0.2) 0%, transparent 50%);
+            animation: floatCircles 4s ease-in-out infinite;
+        }
+        
+        #preloader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .preloader-content {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .preloader-logo {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 35px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            animation: logoFloat 3s ease-in-out infinite, logoPulse 2s ease-in-out infinite;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 
+                        0 0 40px rgba(96, 165, 250, 0.5),
+                        inset 0 0 20px rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .preloader-logo::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
+            animation: shimmer 2s linear infinite;
+        }
+        
+        .preloader-text {
+            font-size: 1.7rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: textGlow 2s ease-in-out infinite;
+        }
+        
+        .preloader-subtext {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto;
+            border: 5px solid rgba(255, 255, 255, 0.15);
+            border-top: 5px solid rgba(255, 255, 255, 0.9);
+            border-right: 5px solid rgba(255, 255, 255, 0.6);
+            border-bottom: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes logoPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 
+                            0 0 40px rgba(96, 165, 250, 0.5),
+                            inset 0 0 20px rgba(255, 255, 255, 0.1);
+            }
+            50% { 
+                transform: scale(1.08); 
+                box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), 
+                            0 0 60px rgba(96, 165, 250, 0.7),
+                            inset 0 0 30px rgba(255, 255, 255, 0.2);
+            }
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes floatCircles {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+            50% { transform: translate(20px, -20px) scale(1.1); opacity: 0.5; }
+        }
+        
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 255, 255, 0.3); }
+            50% { text-shadow: 0 4px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 255, 255, 0.6); }
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+    </style>
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">🎓</div>
+            <div class="preloader-text">Образовательный портал</div>
+            <div class="preloader-subtext">Загрузка...</div>
+            <div class="spinner"></div>
+        </div>
+    </div>
+    
     <!-- ========== HEADER ========== -->
     <header class="header navbar-sticky" id="navbar">
         <div class="header-container">
@@ -163,6 +326,14 @@
     <!-- JavaScript -->
     <script src="{% static 'js/voice.js' %}"></script>
     <script>
+        // Preloader
+        window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            setTimeout(function() {
+                preloader.classList.add('fade-out');
+            }, 500);
+        });
+        
         // Header scroll effect
         window.addEventListener('scroll', function() {
             var navbar = document.getElementById('navbar');

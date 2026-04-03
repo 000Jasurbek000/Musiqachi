@@ -64,7 +64,6 @@ body {
     background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
     box-shadow: 0 4px 20px rgba(100, 181, 246, 0.4);
     backdrop-filter: blur(10px);
-    padding: 5px 0;
     border-radius: 0 0 25px 25px;
 }
 
@@ -73,7 +72,6 @@ body {
     background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(100, 181, 246, 0.4);
-    padding: 5px 0;
     border-radius: 0 0 25px 25px;
 }
 
@@ -89,8 +87,6 @@ body {
 .navbar-scrolled .nav-menu a,
 .header.scrolled .nav-menu a {
     color: rgba(255,255,255,0.9);
-    padding: 12px 20px;
-    font-size: 14px;
     border-bottom-color: transparent;
 }
 
@@ -120,8 +116,6 @@ body {
 /* Search box when scrolled */
 .navbar-scrolled .search-box,
 .header.scrolled .search-box {
-    height: 35px;
-    padding: 8px 15px;
     background: rgba(255, 255, 255, 0.95);
     border-color: rgba(255, 255, 255, 0.3);
 }
@@ -137,8 +131,6 @@ body {
 /* Mode toggle button when scrolled */
 .navbar-scrolled .mode-toggle-btn,
 .header.scrolled .mode-toggle-btn {
-    width: 45px;
-    height: 45px;
     border-color: var(--text-white);
     background: rgba(255, 255, 255, 0.2);
 }
@@ -154,13 +146,11 @@ body {
 .header.scrolled .logo-icon {
     border-color: rgba(255,255,255,0.5);
     box-shadow: 0 2px 12px rgba(0,0,0,0.15), 0 0 0 4px rgba(255,255,255,0.1);
-    width: 70px;
-    height: 70px;
 }
 
 .navbar-scrolled .logo-icon img,
 .header.scrolled .logo-icon img {
-    height: 75px;
+    /* Keep same size as normal state */
 }
 
 .navbar-scrolled .logo-text h1,
@@ -168,24 +158,21 @@ body {
 .header.scrolled .logo-text h1,
 .header.scrolled .logo-text p {
     color: #ffffff;
+    /* Keep same size as normal state */
 }
 
 .navbar-scrolled .logo-text h1,
 .header.scrolled .logo-text h1 {
-    font-size: 18px;
+    /* Size stays the same */
 }
 
 .navbar-scrolled .logo-text p,
 .header.scrolled .logo-text p {
-    font-size: 10px;
+    /* Size stays the same */
     opacity: 0.85;
 }
 
-/* Header top padding when scrolled */
-.navbar-scrolled .header-top,
-.header.scrolled .header-top {
-    padding: 8px 0;
-}
+/* Header top keeps same padding when scrolled - no changes needed */
 
 .header-container {
     max-width: 1400px;
@@ -197,7 +184,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 0;
+    padding: 10px 0;
     transition: all 0.3s ease;
 }
 
@@ -228,15 +215,15 @@ body {
     transition: all 0.3s ease;
     border: 2.5px solid #bee3f8;
     border-radius: 50%;
-    padding: 12px;
-    width: 80px;
-    height: 80px;
+    padding: 10px;
+    width: 65px;
+    height: 65px;
     box-shadow: 0 2px 12px rgba(43,108,176,0.13), 0 0 0 4px rgba(43,108,176,0.07);
     position: relative;
 }
 
 .logo-icon img {
-    height: 80px;
+    height: 60px;
     width: auto;
     display: block;
     object-fit: contain;
@@ -249,7 +236,7 @@ body {
 }
 
 .logo-text h1 {
-    font-size: 22px;
+    font-size: 18px;
     color: #1a365d;
     font-weight: 700;
     line-height: 1.2;
