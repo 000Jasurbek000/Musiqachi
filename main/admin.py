@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course, News, Resource
+from .models import Course, News, Resource, Founder
 
 admin.site.site_header = 'Образовательный портал - Панель управления'
 admin.site.site_title = 'Админ панель'
@@ -90,5 +90,25 @@ class ResourceAdmin(admin.ModelAdmin):
         }),
         ('Публикация', {
             'fields': ('is_published', 'created_at', 'updated_at')
+        }),
+    )
+
+
+@admin.register(Founder)
+class FounderAdmin(admin.ModelAdmin):
+    list_display = ('full_name', 'position', 'company', 'is_active', 'created_at')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('full_name', 'position', 'company')
+    list_editable = ('is_active',)
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        ('Основные данные', {
+            'fields': ('full_name', 'position', 'company')
+        }),
+        ('Фото и биография', {
+            'fields': ('photo', 'bio')
+        }),
+        ('Настройки отображения', {
+            'fields': ('is_active', 'created_at', 'updated_at')
         }),
     )

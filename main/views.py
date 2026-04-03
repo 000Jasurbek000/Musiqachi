@@ -3,6 +3,8 @@ from django.utils.formats import date_format
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 from .models import Course, News, Resource
 
@@ -110,9 +112,73 @@ def contact(request):
     return render(request, 'contact.html')
 
 
+@csrf_exempt
+def contact_submit(request):
+    if request.method == 'POST':
+        try:
+            from django.core.mail import send_mail
+            from django.conf import settings
+            
+            data = json.loads(request.body)
+            name = data.get('name', '')
+            email = data.get('email', '')
+            phone = data.get('phone', '')
+            subject = data.get('subject', '')
+            message = data.get('message', '')
+            
+            # Email matnini tayyorlash
+            email_subject = f'Новое сообщение с сайта: {subject}'
+            email_body = f"""
+Новое сообщение от посетителя сайта:
+
+Имя: {name}
+Email: {email}
+Телефон: {phone}
+Тема: {subject}
+
+Сообщение:
+{message}
+
+---
+Отправлено с образовательного портала
+            """
+            
+            # Email yuborish
+            send_mail(
+                subject=email_subject,
+                message=email_body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.EMAIL_HOST_USER],
+                fail_silently=False,
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Ваше сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Ошибка при отправке сообщения: {str(e)}'
+            })
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Неверный метод запроса'
+    })
+
+
 def about(request):
-    # Biz haqimizda sahifa statik bo'ladi
-    return render(request, 'about.html')
+    from .models import Founder
+    
+    # Faol asoschi ma'lumotini olish
+    founder = Founder.objects.filter(is_active=True).first()
+    
+    context = {
+        'founder': founder
+    }
+    
+    return render(request, 'about.html', context)
 
 
 def search(request):

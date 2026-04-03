@@ -428,3 +428,53 @@ class Resource(models.Model):
         if self.file:
             return self.file.url
         return self.external_url
+
+
+# ============================================
+# ОСНОВАТЕЛЬ (Founder)
+# ============================================
+
+class Founder(models.Model):
+    full_name = models.CharField(
+        max_length=255,
+        verbose_name='ФИО',
+        help_text='Полное имя основателя'
+    )
+    position = models.CharField(
+        max_length=255,
+        verbose_name='Должность',
+        help_text='Должность основателя (например: Директор издательства)'
+    )
+    company = models.CharField(
+        max_length=255,
+        verbose_name='Организация',
+        blank=True,
+        help_text='Название организации'
+    )
+    photo = models.ImageField(
+        upload_to='founder/',
+        verbose_name='Фотография',
+        blank=True,
+        null=True,
+        help_text='Фото основателя'
+    )
+    bio = models.TextField(
+        verbose_name='Краткая биография',
+        blank=True,
+        help_text='Краткая информация об основателе'
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Отображать на сайте',
+        help_text='Показывать блок основателя на странице "О нас"'
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата изменения')
+
+    class Meta:
+        verbose_name = 'Основатель'
+        verbose_name_plural = 'Основатели'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.full_name

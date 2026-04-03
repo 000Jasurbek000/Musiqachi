@@ -116,9 +116,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'davletovjasurbek22@gmail.com'
-EMAIL_HOST_PASSWORD = 'wvac xrfi bqte yxgz'
-DEFAULT_FROM_EMAIL = 'davletovjasurbek22@gmail.com'
+EMAIL_HOST_USER = 'musiqachiuz@gmail.com'
+EMAIL_HOST_PASSWORD = 'vuxp nnry tchd yjlp'
+DEFAULT_FROM_EMAIL = 'musiqachiuz@gmail.com'
 
 # Jazzmin Settings
 JAZZMIN_SETTINGS = {

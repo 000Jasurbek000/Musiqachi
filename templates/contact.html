@@ -61,16 +61,17 @@
 
             <div style="margin-bottom: 20px;">
                 <label style="display: block; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500;">Телефон</label>
-                <input type="tel" name="phone" id="phone" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px;">
+                <input type="tel" name="phone" id="phone" placeholder="+998 XX XXX XX XX" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px;">
             </div>
 
             <div style="margin-bottom: 20px;">
                 <label style="display: block; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500;">Тема</label>
                 <select name="subject" id="subject" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px;">
                     <option value="">Выберите тему</option>
-                    {% for subject in contact_subjects %}
-                    <option>{{ subject.title }}</option>
-                    {% endfor %}
+                    <option value="Общий вопрос">Общий вопрос</option>
+                    <option value="Техническая поддержка">Техническая поддержка</option>
+                    <option value="Сотрудничество">Сотрудничество</option>
+                    <option value="Жалоба">Жалоба</option>
                 </select>
             </div>
 
