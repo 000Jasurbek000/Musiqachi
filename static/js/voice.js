@@ -290,8 +290,19 @@ document.addEventListener('DOMContentLoaded', () => {
     updateVoiceSelection();
     attachSpeechHandlers();
     attachDataHrefHandlers();
-    showVoiceIndicator('Русское озвучивание готово');
-    window.setTimeout(hideVoiceIndicator, 1400);
+    
+    // Sayt ochilganda rejim haqida xabar berish
+    if (accessibilityMode && speechEnabled) {
+        showVoiceIndicator('Русское озвучивание готово');
+        // Kichik kutish bilan ovozli xabar
+        window.setTimeout(() => {
+            speakText('Русское озвучивание включено. Наведите курсор на элементы для озвучивания');
+            window.setTimeout(hideVoiceIndicator, 3000);
+        }, 500);
+    } else {
+        showVoiceIndicator('Русское озвучивание готово');
+        window.setTimeout(hideVoiceIndicator, 1400);
+    }
 });
 
 if ('speechSynthesis' in window) {
